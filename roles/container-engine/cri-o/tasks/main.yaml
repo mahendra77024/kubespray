@@ -71,7 +71,7 @@
     name: kubelet
     state: stopped
   when:
-    - not runtime_matches
+    - runtime_matches is defined and runtime_matches not true
     - ansible_facts.services['kubelet.service'] is defined and ansible_facts.services['kubelet.service'].state == 'running'
 
 
@@ -79,7 +79,7 @@
   ansible.builtin.shell: |
     set -o pipefail && "{{ bin_dir }}/crictl ps -q | xargs -r {{ bin_dir }}/crictl stop"
   when:
-    - not runtime_matches
+    - runtime_matches is defined and runtime_matches not true
     - ansible_facts.services['crio.service'] is defined
 
 - name: Cri-o | stop crio service if running
@@ -87,7 +87,7 @@
     name: crio
     state: stopped
   when:
-    - not runtime_matches
+    - runtime_matches is defined and runtime_matches not true
     - ansible_facts.services['crio.service'] is defined and ansible_facts.services['crio.service'].state == 'running'
 
 - name: Cri-o | make sure needed folders exist in the system
@@ -291,5 +291,5 @@
     name: kubelet
     state: started
   when:
-    - not runtime_matches
+    - runtime_matches is defined and runtime_matches not true
     - ansible_facts.services['kubelet.service'] is defined and ansible_facts.services['kubelet.service']['status'] != 'not-found'
